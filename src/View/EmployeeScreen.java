@@ -1,7 +1,12 @@
 package View;
 
+import JDBC.ConnectionFactory;
 import Model.Employee;
 import Model.MostrarJComboBox;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.ParseException;
 import javax.swing.JOptionPane;
 import javax.swing.text.MaskFormatter;
@@ -190,24 +195,14 @@ public class EmployeeScreen extends javax.swing.JInternalFrame {
 
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
         if (this.verifica()) {
-            Employee funcionario = new Employee();
-            funcionario.cadastro(this.jFormattedTextDate.getText(), this.jTextFieldName.getText(), this.jTextFieldUser.getText(), this.jComboBoxRole.getSelectedIndex());
-            this.jTextFieldName.setText("");
-            this.jFormattedTextDate.setText("");
-            this.jTextFieldUser.setText("");
-            this.jComboBoxRole.setSelectedIndex(0);
+            this.cadastrar();
         }
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
     private void jButtonSaveKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButtonSaveKeyPressed
         if (evt.getKeyCode() == 10) {
             if (this.verifica()) {
-                Employee funcionario = new Employee();
-                funcionario.cadastro(this.jFormattedTextDate.getText(), this.jTextFieldName.getText(), this.jTextFieldUser.getText(), this.jComboBoxRole.getSelectedIndex());
-                this.jTextFieldName.setText("");
-                this.jFormattedTextDate.setText("");
-                this.jTextFieldUser.setText("");
-                this.jComboBoxRole.setSelectedIndex(0);
+                this.cadastrar();
             }
         }
     }//GEN-LAST:event_jButtonSaveKeyPressed
@@ -220,19 +215,19 @@ public class EmployeeScreen extends javax.swing.JInternalFrame {
 
     private void jTextFieldUserKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldUserKeyPressed
         if (evt.getKeyCode() == 10) {
-                this.jComboBoxRole.requestFocus();
+            this.jComboBoxRole.requestFocus();
         }
     }//GEN-LAST:event_jTextFieldUserKeyPressed
 
     private void jComboBoxRoleKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jComboBoxRoleKeyPressed
         if (evt.getKeyCode() == 10) {
-                this.jFormattedTextDate.requestFocus();
+            this.jFormattedTextDate.requestFocus();
         }
     }//GEN-LAST:event_jComboBoxRoleKeyPressed
 
     private void jFormattedTextDateKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jFormattedTextDateKeyPressed
         if (evt.getKeyCode() == 10) {
-                this.jButtonSave.requestFocus();
+            this.jButtonSave.requestFocus();
         }
     }//GEN-LAST:event_jFormattedTextDateKeyPressed
 
@@ -251,6 +246,17 @@ public class EmployeeScreen extends javax.swing.JInternalFrame {
     private javax.swing.JTextField jTextFieldUser;
     // End of variables declaration//GEN-END:variables
     private final MostrarJComboBox jcombobox = new MostrarJComboBox();
+
+    private void cadastrar() {
+        Employee funcionario = new Employee();
+        funcionario.cadastro(this.jFormattedTextDate.getText(), this.jTextFieldName.getText(),
+        this.jTextFieldUser.getText(), this.idCargo(this.jComboBoxRole.getItemAt
+        (this.jComboBoxRole.getSelectedIndex())));
+        this.jTextFieldName.setText("");
+        this.jFormattedTextDate.setText("");
+        this.jTextFieldUser.setText("");
+        this.jComboBoxRole.setSelectedIndex(0);
+    }
 
     private boolean verifica() {
         if (this.jTextFieldName.getText().equals("")) {
@@ -276,7 +282,7 @@ public class EmployeeScreen extends javax.swing.JInternalFrame {
         return true;
     }
 
-    public final void formatarCampos() {
+    private final void formatarCampos() {
 
         try {
             MaskFormatter mask = new MaskFormatter("##/##/####");
@@ -284,6 +290,24 @@ public class EmployeeScreen extends javax.swing.JInternalFrame {
         } catch (ParseException ex) {
             JOptionPane.showMessageDialog(this, "Não foi possivel formatar o texto");
         }
+    }
 
+    private int idCargo(String nome) {
+        int id = 0;
+        Connection con;
+        try {
+            con = ConnectionFactory.getConnection();
+            String query = ("select id from cargo where nome_cargo = ?");
+            PreparedStatement cnd = con.prepareStatement(query);
+            cnd.setString(1, nome);
+            ResultSet rs = cnd.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt("id");
+                cnd.close();
+                con.close();
+            }
+        } catch (SQLException ex) {
+        }
+        return id;
     }
 }

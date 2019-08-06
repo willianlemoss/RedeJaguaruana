@@ -108,7 +108,7 @@ public class ProductionrecordScreen extends javax.swing.JInternalFrame {
                 .addComponent(jButtonVisualiar, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(78, 78, 78)
                 .addComponent(jButtonExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButtonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -125,12 +125,24 @@ public class ProductionrecordScreen extends javax.swing.JInternalFrame {
 
         jLabel2.setText("Pesquisar:");
 
+        jTextFieldPesquisa.setText("Informe o nome do funcionario");
+        jTextFieldPesquisa.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTextFieldPesquisaFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTextFieldPesquisaFocusLost(evt);
+            }
+        });
+
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/Lupa.png"))); // NOI18N
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
+        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagens/refresh.png"))); // NOI18N
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -167,20 +179,20 @@ public class ProductionrecordScreen extends javax.swing.JInternalFrame {
                 .addGap(26, 26, 26)
                 .addComponent(jLabel1)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTextFieldPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2)
-                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(1, 1, 1)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))))
-                .addGap(45, 45, 45)
+                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(47, 47, 47)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -201,12 +213,32 @@ public class ProductionrecordScreen extends javax.swing.JInternalFrame {
         this.dispose();
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        model.setNumRows(0);
+        this.motrarRegistro();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jTextFieldPesquisaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldPesquisaFocusGained
+        if (this.jTextFieldPesquisa.getText().equals("Informe o nome do funcionario")) {
+            this.jTextFieldPesquisa.setText("");
+        }
+    }//GEN-LAST:event_jTextFieldPesquisaFocusGained
+
+    private void jTextFieldPesquisaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldPesquisaFocusLost
+        if (this.jTextFieldPesquisa.getText().equals("")) {
+            this.jTextFieldPesquisa.setText("Informe o nome do funcionario");
+        }
+    }//GEN-LAST:event_jTextFieldPesquisaFocusLost
+
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         if (this.verificaPesquisa()) {
             try {
+                this.model.setNumRows(0);
                 Connection con = ConnectionFactory.getConnection();
-                String query = ("select * from registro_producao as r , funcionario as f where r.id_funcionario = f.id and f.nome_reduzido like %" + this.jTextFieldPesquisa.getText() + "%");
+                String query = ("select * from registro_producao , funcionario where registro_producao.id_funcionario = funcionario.id and funcionario.nome_reduzido like ?");
                 PreparedStatement cnd = con.prepareStatement(query);
+                System.out.println("dadsadadd");
+                cnd.setString(1, "%" + this.jTextFieldPesquisa.getText() + "%");
                 ResultSet rs = cnd.executeQuery();
                 if (rs.next()) {
                     String dataInvetida = rs.getString("data");
@@ -228,39 +260,39 @@ public class ProductionrecordScreen extends javax.swing.JInternalFrame {
                         data,
                         data2,
                         pago});
-                    while (rs.next()) {
-                        dataInvetida = rs.getString("data");
-                        dataInvetida2 = rs.getString("data_pagamento");
-                        data = dataInvetida.substring(8, 10) + "/" + dataInvetida.substring(5, 7) + "/" + dataInvetida.substring(0, 4);
-                        data2 = "";
-                        if (dataInvetida2 != null) {
-                            data2 = dataInvetida2.substring(8, 10) + "/" + dataInvetida2.substring(5, 7) + "/" + dataInvetida2.substring(0, 4);
+                while (rs.next()) {
+                    dataInvetida = rs.getString("data");
+                    dataInvetida2 = rs.getString("data_pagamento");
+                    data = dataInvetida.substring(8, 10) + "/" + dataInvetida.substring(5, 7) + "/" + dataInvetida.substring(0, 4);
+                    data2 = "";
+                    if (dataInvetida2 != null) {
+                        data2 = dataInvetida2.substring(8, 10) + "/" + dataInvetida2.substring(5, 7) + "/" + dataInvetida2.substring(0, 4);
 
-                        }
-                        pago = rs.getBoolean("pagar");
-                        func = this.mostraFunc(rs.getString("id_funcionario"));
-                        servi = this.mostraServi(rs.getString("id_servico"));
-                        model.addRow(new Object[]{
-                            rs.getString("id"),
-                            func,
-                            servi,
-                            rs.getString("quantidade_servico"),
-                            data,
-                            data2,
-                            pago});
                     }
-                    cnd.close();
-                    con.close();
-                }
-            } catch (SQLException ex) {
+                    pago = rs.getBoolean("pagar");
+                    func = this.mostraFunc(rs.getString("id_funcionario"));
+                    servi = this.mostraServi(rs.getString("id_servico"));
+                    model.addRow(new Object[]{
+                        rs.getString("id"),
+                        func,
+                        servi,
+                        rs.getString("quantidade_servico"),
+                        data,
+                        data2,
+                        pago});
             }
+            cnd.close();
+            con.close();
+            this.jTextFieldPesquisa.setText("");
+        } else {
+            JOptionPane.showMessageDialog(this, "Não foi possivel encontrar produção feita por esse artesão");
+            this.jTextFieldPesquisa.setText("");
+            this.motrarRegistro();
+        }
+        } catch (SQLException ex) {
+        }
         }
     }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        model.setNumRows(0);
-        this.motrarRegistro();
-    }//GEN-LAST:event_jButton3ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

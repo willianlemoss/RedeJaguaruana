@@ -220,18 +220,18 @@ public class AddProductScreen extends javax.swing.JDialog {
         return true;
     }
 
-    public int procuraProduto(int id) {
+    public int procuraProduto(String nome) {
         for (int i = 0; i < model.getRowCount(); i++) {
-            if (this.jComboBox1.getSelectedIndex() == (int) model.getValueAt(i, 0)) {
+            if (nome.equals(model.getValueAt(i, 1))) {
                 return i;
             }
         }
         return -1;
     }
 
-    public void cadastrar() {
+    private void cadastrar() {
         if (this.verifica()) {
-            int id = this.procuraProduto(this.jComboBox1.getSelectedIndex());
+            int id = this.procuraProduto(this.jComboBox1.getItemAt(this.jComboBox1.getSelectedIndex()));
             if (id == -1) {
                 model.addRow(new Object[]{
                     this.jComboBox1.getSelectedIndex(),

@@ -9,6 +9,7 @@ import JDBC.ConnectionFactory;
 import Model.MostrarJComboBox;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import javax.swing.JOptionPane;
@@ -61,7 +62,6 @@ public class ProductionScreen extends javax.swing.JInternalFrame {
 
         jLabel3.setText("Funcionario:");
 
-        jFormattedTextField1.setText("10/05/2019");
         jFormattedTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jFormattedTextField1KeyPressed(evt);
@@ -205,7 +205,7 @@ public class ProductionScreen extends javax.swing.JInternalFrame {
             this.jComboBoxSer.setSelectedIndex(0);
             this.jFormattedTextField1.setText("  /  /    ");
             this.jFormattedTextField2.setText("");
-            
+
         }
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
@@ -304,13 +304,16 @@ public class ProductionScreen extends javax.swing.JInternalFrame {
             try {
                 Connection con = ConnectionFactory.getConnection();
                 String query;
-                query = "insert into registro_producao(data,pagar,id_funcionario,id_servico,quantidade_servico) values(?,0,?,?,?)";
-                String anoInverso = this.jFormattedTextField1.getText().substring(6, 10) + this.jFormattedTextField1.getText().substring(2, 6) + this.jFormattedTextField1.getText().substring(0, 2);
+                query = "insert into registro_producao(data,pagar,id_funcionario"
+                        + ",id_servico,quantidade_servico) values(?,0,?,?,?)";
+                String anoInverso = this.jFormattedTextField1.getText().substring(6, 10)
+                        + this.jFormattedTextField1.getText().substring(2, 6)
+                        + this.jFormattedTextField1.getText().substring(0, 2);
                 PreparedStatement stmt;
                 stmt = con.prepareStatement(query);
                 stmt.setString(1, anoInverso);
-                stmt.setInt(2, this.jComboBoxFunc.getSelectedIndex());
-                stmt.setInt(3, this.jComboBoxSer.getSelectedIndex());
+                stmt.setInt(2, this.idFunc(this.jComboBoxFunc.getItemAt(this.jComboBoxFunc.getSelectedIndex())));
+                stmt.setInt(3, this.idServico(this.jComboBoxSer.getItemAt(this.jComboBoxSer.getSelectedIndex())));
                 stmt.setString(4, this.jFormattedTextField2.getText());
                 JOptionPane.showMessageDialog(this, "Cadastro realizado com sucesso");
                 stmt.executeUpdate();
@@ -319,5 +322,43 @@ public class ProductionScreen extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(this, ex.getMessage());
             }
         }
+    }
+
+    private int idFunc(String nome) {
+        int id = 0;
+        Connection con;
+        try {
+            con = ConnectionFactory.getConnection();
+            String query = ("select id from funcionario where nome_reduzido = ?");
+            PreparedStatement cnd = con.prepareStatement(query);
+            cnd.setString(1, nome);
+            ResultSet rs = cnd.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt("id");
+                cnd.close();
+                con.close();
+            }
+        } catch (SQLException ex) {
+        }
+        return id;
+    }
+
+    private int idServico(String nome) {
+        int id = 0;
+        Connection con;
+        try {
+            con = ConnectionFactory.getConnection();
+            String query = ("select id from servico where nome_servico = ?");
+            PreparedStatement cnd = con.prepareStatement(query);
+            cnd.setString(1, nome);
+            ResultSet rs = cnd.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt("id");
+                cnd.close();
+                con.close();
+            }
+        } catch (SQLException ex) {
+        }
+        return id;
     }
 }

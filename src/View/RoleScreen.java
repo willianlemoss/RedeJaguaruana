@@ -5,8 +5,13 @@
  */
 package View;
 
+import JDBC.ConnectionFactory;
 import Model.MostrarJComboBox;
 import Model.Role;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 /**
@@ -157,19 +162,13 @@ public class RoleScreen extends javax.swing.JInternalFrame {
 
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
         if (this.verifica()) {
-            Role role = new Role();
-            role.cadastrar(this.jTextFieldName.getText(), this.jComboBoxSector.getSelectedIndex());
-            this.jTextFieldName.setText("");
-            this.jComboBoxSector.setSelectedIndex(0);
+            this.cadastrar();
         }
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
     private void jButtonSaveKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButtonSaveKeyPressed
         if (evt.getKeyCode() == 10) {
-            Role role = new Role();
-            role.cadastrar(this.jTextFieldName.getText(), this.jComboBoxSector.getSelectedIndex());
-            this.jTextFieldName.setText("");
-            this.jComboBoxSector.setSelectedIndex(0);
+            this.cadastrar();
         }
     }//GEN-LAST:event_jButtonSaveKeyPressed
 
@@ -219,5 +218,32 @@ public class RoleScreen extends javax.swing.JInternalFrame {
             return false;
         }
         return true;
+    }
+
+    private void cadastrar() {
+        Role role = new Role();
+        role.cadastrar(this.jTextFieldName.getText(), this.idSetor(
+        this.jComboBoxSector.getItemAt(this.jComboBoxSector.getSelectedIndex())));
+        this.jTextFieldName.setText("");
+        this.jComboBoxSector.setSelectedIndex(0);
+    }
+
+    private int idSetor(String nome) {
+        int id = 0;
+        Connection con;
+        try {
+            con = ConnectionFactory.getConnection();
+            String query = ("select id from setor where nome_setor = ?");
+            PreparedStatement cnd = con.prepareStatement(query);
+            cnd.setString(1, nome);
+            ResultSet rs = cnd.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt("id");
+                cnd.close();
+                con.close();
+            }
+        } catch (SQLException ex) {
+        }
+        return id;
     }
 }

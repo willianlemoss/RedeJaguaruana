@@ -226,21 +226,17 @@ public class ServiceScreen extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
         if (this.verifica()) {
             this.cadastrar();
-            this.jTextFieldName.setText("");
-            this.jComboBoxSector.setSelectedIndex(0);
         }
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
     private void jButtonSaveKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButtonSaveKeyPressed
         if (evt.getKeyCode() == 10) {
             if (this.verifica()) {
-                Service servico = new Service();
-                servico.cadastro(this.jTextFieldName.getText(), this.jComboBoxSector.getSelectedIndex());
-                this.jTextFieldName.setText("");
-                this.jComboBoxSector.setSelectedIndex(0);
+                this.cadastrar();
             }
         }
     }//GEN-LAST:event_jButtonSaveKeyPressed
@@ -343,7 +339,7 @@ public class ServiceScreen extends javax.swing.JInternalFrame {
                 query = "insert into servico (nome_servico, id_setor) values (?,?)";
                 PreparedStatement stmt = con.prepareStatement(query);
                 stmt.setString(1, this.jTextFieldName.getText());
-                stmt.setInt(2, this.jComboBoxSector.getSelectedIndex());
+                stmt.setInt(2, this.idSetor(this.jComboBoxSector.getItemAt(this.jComboBoxSector.getSelectedIndex())));
                 stmt.executeUpdate();
 
                 query = "select count(*) from servico";
@@ -371,9 +367,30 @@ public class ServiceScreen extends javax.swing.JInternalFrame {
                 while (jTableProducao.getRowCount() > 0) {
                     model.removeRow(0);
                 }
+                this.jTextFieldName.setText("");
+                this.jComboBoxSector.setSelectedIndex(0);
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage());
             }
         }
+    }
+
+    private int idSetor(String nome) {
+        int id = 0;
+        Connection con;
+        try {
+            con = ConnectionFactory.getConnection();
+            String query = ("select id from setor where nome_setor = ?");
+            PreparedStatement cnd = con.prepareStatement(query);
+            cnd.setString(1, nome);
+            ResultSet rs = cnd.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt("id");
+                cnd.close();
+                con.close();
+            }
+        } catch (SQLException ex) {
+        }
+        return id;
     }
 }

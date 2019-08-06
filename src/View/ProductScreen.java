@@ -5,8 +5,13 @@
  */
 package View;
 
+import JDBC.ConnectionFactory;
 import Model.MostrarJComboBox;
 import Model.Product;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 /**
@@ -296,5 +301,25 @@ public class ProductScreen extends javax.swing.JInternalFrame {
             return false;
         }
         return true;
+    }
+    
+    
+    private int idCatergoria(String nome) {
+        int id = 0;
+        Connection con;
+        try {
+            con = ConnectionFactory.getConnection();
+            String query = ("select id from categoria_produto where nome_categoria = ?");
+            PreparedStatement cnd = con.prepareStatement(query);
+            cnd.setString(1, nome);
+            ResultSet rs = cnd.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt("id");
+                cnd.close();
+                con.close();
+            }
+        } catch (SQLException ex) {
+        }
+        return id;
     }
 }
