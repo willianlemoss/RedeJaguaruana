@@ -60,6 +60,11 @@ public class RoleScreen extends javax.swing.JInternalFrame {
         jLabel3.setText("Setor:");
 
         jComboBoxSector.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBoxSector.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBoxSectorActionPerformed(evt);
+            }
+        });
         jComboBoxSector.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jComboBoxSectorKeyPressed(evt);
@@ -189,8 +194,14 @@ public class RoleScreen extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_jTextFieldNameKeyPressed
 
     private void jComboBoxSectorKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jComboBoxSectorKeyPressed
-
+            if (evt.getKeyCode() == 10) {
+            this.jButtonSave.requestFocus();
+        }
     }//GEN-LAST:event_jComboBoxSectorKeyPressed
+
+    private void jComboBoxSectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBoxSectorActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBoxSectorActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

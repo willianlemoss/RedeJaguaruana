@@ -18,14 +18,18 @@ import javax.swing.table.DefaultTableModel;
  */
 public class ViewproductsScreen extends javax.swing.JDialog {
 
-    public ViewproductsScreen(java.awt.Frame parent, boolean modal, String idServico, String idRegistro) {
+    public ViewproductsScreen(java.awt.Frame parent, boolean modal, String idServico, String idRegistro, String quantidade) {
         super(parent, modal);
         initComponents();
         this.model = (DefaultTableModel) this.jTable1.getModel();
         this.model.setNumRows(0);
+        this.model3 = (DefaultTableModel) this.jTable3.getModel();
+        this.model3.setNumRows(0);
         this.mostrar(idServico);
+        this.mostrarHistorico();
         this.idServico = idServico;
         this.idRegistro = idRegistro;
+        this.quantidade = quantidade;
     }
 
     /**
@@ -37,17 +41,36 @@ public class ViewproductsScreen extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         jButtonPagar = new javax.swing.JButton();
         jButtonCancel = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTable3 = new javax.swing.JTable();
+
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(jTable2);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
-        jLabel1.setText("Produtos");
+        jLabel1.setText("Pagamento");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -109,27 +132,71 @@ public class ViewproductsScreen extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
+        jLabel2.setText("Produtos a ser pago");
+
+        jLabel3.setText("Histórico de pagamento");
+
+        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Data do pagamento", "Quantidade", "Valor"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(jTable3);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(130, 130, 130)
-                .addComponent(jLabel1)
-                .addContainerGap(130, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap(15, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(130, 130, 130)
+                                .addComponent(jLabel1))
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel2)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(26, 26, 26)
                 .addComponent(jLabel1)
+                .addGap(2, 2, 2)
+                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -139,7 +206,7 @@ public class ViewproductsScreen extends javax.swing.JDialog {
 
     private void jButtonPagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPagarActionPerformed
         this.dispose();
-        ViewPagamentoScreen vp = new ViewPagamentoScreen(null, true, this.idRegistro);
+        ViewPagamentoScreen vp = new ViewPagamentoScreen(null, true, this.idRegistro, Integer.parseInt(this.quantidade));
         vp.setResizable(false);
         vp.setLocationRelativeTo(null);
         vp.setVisible(true);
@@ -190,7 +257,7 @@ public class ViewproductsScreen extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ViewproductsScreen dialog = new ViewproductsScreen(new javax.swing.JFrame(), true,null,null);
+                ViewproductsScreen dialog = new ViewproductsScreen(new javax.swing.JFrame(), true, null, null, null);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -206,13 +273,21 @@ public class ViewproductsScreen extends javax.swing.JDialog {
     private javax.swing.JButton jButtonCancel;
     private javax.swing.JButton jButtonPagar;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
+    private javax.swing.JTable jTable3;
     // End of variables declaration//GEN-END:variables
     private String idServico;
     private String idRegistro;
+    private String quantidade;
     private DefaultTableModel model;
+    private DefaultTableModel model3;
 
     private void mostrar(String id) {
         Connection con;
@@ -237,6 +312,33 @@ public class ViewproductsScreen extends javax.swing.JDialog {
                         quan,
                         "",
                         false});
+                }
+                cnd.close();
+                con.close();
+            }
+
+        } catch (SQLException ex) {
+
+        }
+    }
+
+    private void mostrarHistorico() {
+        Connection con;
+        try {
+            con = ConnectionFactory.getConnection();
+            String query = ("select * from registro_pagamento where id_registro_producao = " + this.idRegistro);
+            PreparedStatement cnd = con.prepareStatement(query);
+            ResultSet rs = cnd.executeQuery();
+            if (rs.next()) {
+                model3.addRow(new Object[]{
+                    rs.getString("data_pagamento"),
+                    rs.getString("quantidade"),
+                    ""});
+                while (rs.next()) {
+                    model3.addRow(new Object[]{
+                        rs.getString("data_pagamento"),
+                        rs.getString("quantidade"),
+                        ""});
                 }
                 cnd.close();
                 con.close();

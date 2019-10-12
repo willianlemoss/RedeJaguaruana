@@ -22,10 +22,11 @@ public class ViewPagamentoScreen extends javax.swing.JDialog {
     /**
      * Creates new form ViewPagamentoScreen
      */
-    public ViewPagamentoScreen(java.awt.Frame parent, boolean modal,String idRegistro) {
+    public ViewPagamentoScreen(java.awt.Frame parent, boolean modal, String idRegistro, int quantidade) {
         super(parent, modal);
         initComponents();
         this.idRegistro = idRegistro;
+        this.quantidade = quantidade;
         this.formatarCampos();
     }
 
@@ -45,7 +46,7 @@ public class ViewPagamentoScreen extends javax.swing.JDialog {
         jButtonSave = new javax.swing.JButton();
         jButtonCancel = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
-        jFormattedTextField2 = new javax.swing.JFormattedTextField();
+        jFormattedQuantiade = new javax.swing.JFormattedTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -103,7 +104,7 @@ public class ViewPagamentoScreen extends javax.swing.JDialog {
 
         jLabel3.setText("Quantidade:");
 
-        jFormattedTextField2.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        jFormattedQuantiade.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -120,7 +121,7 @@ public class ViewPagamentoScreen extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
-                            .addComponent(jFormattedTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jFormattedQuantiade, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(jFormattedTextField1, javax.swing.GroupLayout.Alignment.LEADING)
@@ -139,7 +140,7 @@ public class ViewPagamentoScreen extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jFormattedTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
-                    .addComponent(jFormattedTextField2))
+                    .addComponent(jFormattedQuantiade))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -197,7 +198,7 @@ public class ViewPagamentoScreen extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ViewPagamentoScreen dialog = new ViewPagamentoScreen(new javax.swing.JFrame(), true, null);
+                ViewPagamentoScreen dialog = new ViewPagamentoScreen(new javax.swing.JFrame(), true, null, 0);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -212,14 +213,15 @@ public class ViewPagamentoScreen extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCancel;
     private javax.swing.JButton jButtonSave;
+    private javax.swing.JFormattedTextField jFormattedQuantiade;
     private javax.swing.JFormattedTextField jFormattedTextField1;
-    private javax.swing.JFormattedTextField jFormattedTextField2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
     String idRegistro;
+    int quantidade;
 
     private boolean verifica() {
         if (this.jFormattedTextField1.getText().equals("")) {
@@ -245,19 +247,31 @@ public class ViewPagamentoScreen extends javax.swing.JDialog {
         if (this.verifica()) {
             Connection con;
             try {
-
-                String anoInverso = this.jFormattedTextField1.getText().substring(6, 10) + this.jFormattedTextField1.getText().substring(2, 6) + this.jFormattedTextField1.getText().substring(0, 2);
-                con = ConnectionFactory.getConnection();
-                String query = "update registro_producao set data_pagamento = ? , pagar = ? where id = ?";
-                PreparedStatement stmt = con.prepareStatement(query);
-                stmt.setString(1, anoInverso);
-                stmt.setBoolean(2, true);
-                stmt.setString(3, idRegistro);
-                stmt.executeUpdate();
-                JOptionPane.showOptionDialog(null, "Pago com Sucesso", "Confirmação!", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, null, "ok");
-                stmt.close();
-                con.close();
-                this.dispose();
+                int quant = Integer.parseInt(this.jFormattedQuantiade.getText());
+                if (quant > 0 && quant < this.quantidade) {
+                    String anoInverso = this.jFormattedTextField1.getText().substring(6, 10) + this.jFormattedTextField1.getText().substring(2, 6) + this.jFormattedTextField1.getText().substring(0, 2);
+                    con = ConnectionFactory.getConnection();
+                    String query = "update registro_producao set data_pagamento = ? , pagar = ?, quantidade_servico = ?  where id = ?";
+                    PreparedStatement stmt = con.prepareStatement(query);
+                    stmt.setString(1, anoInverso);
+                    stmt.setBoolean(2, true);
+                    stmt.setString(3, idRegistro);
+                    stmt.setInt(4, this.quantidade - quant);
+                    stmt.executeUpdate();
+                    query = "insert into registro_pagamento (quantidade, data_pagamento, id_registro_producao) values (?,?,?)";
+                    stmt = con.prepareStatement(query);
+                    stmt.setInt(1, quant);
+                    stmt.setString(2, anoInverso);
+                    stmt.setString(3, idRegistro);
+                    stmt.executeUpdate();
+                    JOptionPane.showOptionDialog(null, "Pago com Sucesso", "Confirmação!", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, null, "ok");
+                    stmt.close();
+                    con.close();
+                    this.dispose();
+                }else{
+                    JOptionPane.showMessageDialog(this, "Quantidade que deseja pagar é maior do que a quantidade que tem a ser pago o maximo que pode ser pago é" + this.quantidade);
+                    
+                }
             } catch (SQLException ex) {
             }
 
